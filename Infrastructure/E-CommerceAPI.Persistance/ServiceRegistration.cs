@@ -1,4 +1,10 @@
-﻿using E_CommerceAPI.Persistance.Contexts;
+﻿using E_CommercaAPI.Application.Repositories.CustomerRepositories;
+using E_CommercaAPI.Application.Repositories.OrderRepositories;
+using E_CommercaAPI.Application.Repositories.ProductRepositories;
+using E_CommerceAPI.Persistance.Contexts;
+using E_CommerceAPI.Persistance.Repositories.CustomerRepositories;
+using E_CommerceAPI.Persistance.Repositories.OrderRepositories;
+using E_CommerceAPI.Persistance.Repositories.ProductRepositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +21,15 @@ namespace E_CommerceAPI.Persistance
     {
         public static void AddPersistanceServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<ECommerceAPIDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("PostgreSQL")));
+            services.AddDbContext<ECommerceAPIDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("PostgreSQL")),ServiceLifetime.Singleton);
+            services.AddSingleton<ICustomerReadRepository,CustomerReadRepository>();
+            services.AddSingleton<ICustomerWriteRepository,CustomerWriteRepository>();
+
+            services.AddSingleton<IOrderReadRepository, OrderReadRepository>();
+            services.AddSingleton<IOrderWriteRepository, OrderWriteRepository>();
+
+            services.AddSingleton<IProductReadRepository, ProductReadRepository>();
+            services.AddSingleton<IProductWriteRepository, ProductWriteRepository>();
         }
     }
 }
