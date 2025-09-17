@@ -1,4 +1,7 @@
-﻿using E_CommercaAPI.Application.Repositories.ProductRepositories;
+﻿using E_CommercaAPI.Application.Repositories.CustomerRepositories;
+using E_CommercaAPI.Application.Repositories.OrderRepositories;
+using E_CommercaAPI.Application.Repositories.ProductRepositories;
+using E_CommerceAPI.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,23 +14,25 @@ namespace E_CommerceAPI.API.Controllers
         private readonly IProductWriteRepository _writeRepository;
         private readonly IProductReadRepository _readRepository;
 
-        public ProductsController(IProductWriteRepository writeRepository, IProductReadRepository readRepository)
+        private readonly IOrderWriteRepository _order;
+        private readonly IOrderReadRepository _orderread;
+        private readonly ICustomerWriteRepository _customer;
+
+        public ProductsController(IProductWriteRepository writeRepository, IProductReadRepository readRepository, IOrderWriteRepository order, ICustomerWriteRepository customer, IOrderReadRepository orderread)
         {
             _writeRepository = writeRepository;
             _readRepository = readRepository;
+            _order = order;
+            _customer = customer;
+            _orderread = orderread;
         }
 
         [HttpGet]
-        public async void Get()
+        public async Task Get()
         {
-            await _writeRepository.AddRangeAsync(
-                new()
-                {
-                    new() {Id = Guid.NewGuid(),Name ="Product 1",Price = 100, CreatedDate = DateTime.UtcNow,Stock =10 },
-                    new() {Id = Guid.NewGuid(),Name ="Product 2",Price = 200, CreatedDate = DateTime.UtcNow,Stock =20 },
-                    new() {Id = Guid.NewGuid(),Name ="Product 3",Price = 300, CreatedDate = DateTime.UtcNow,Stock =30 }
-                });
-            await _writeRepository.SaveAsync();
+            Order o = await _orderread.GetByIdAsync("0199573d-e471-74dd-b372-c344b7fb2ed6");
+            o.Address = "İstnanbul";
+            await _order.SaveAsync();
         }
     }
 }
